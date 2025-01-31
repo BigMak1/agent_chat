@@ -1,6 +1,11 @@
 fastapi
-aiologger[aiofiles]
+aiologger
 pip-chill
 uvicorn
 gunicorn
+langchain
+chromadb==0.4.18
+langchain-chroma
+chromadb
+yandex-chain
 yandex_cloud_ml_sdk
