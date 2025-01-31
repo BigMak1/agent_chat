@@ -3,3 +3,4 @@ aiologger[aiofiles]
 pip-chill
 uvicorn
 gunicorn
+yandex_cloud_ml_sdk

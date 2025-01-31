@@ -1,5 +1,7 @@
 import time
 from typing import List
+import os
+from yandex_cloud_ml_sdk import YCloudML
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from pydantic import HttpUrl
@@ -8,6 +10,7 @@ from utils.logger import setup_logger
 
 # Initialize
 app = FastAPI()
+sdk = YCloudML(folder_id=os.getenv("CATALOG_ID"), auth=os.getenv("API_KEY"))
 logger = None
 
 
@@ -54,24 +57,38 @@ async def predict(body: PredictionRequest):
     try:
         await logger.info(f"Processing prediction request with id: {body.id}")
         # Здесь будет вызов вашей модели
+        messages = [
+            {
+                "role": "system",
+                "text": "Ответь на следующий вопрос, указав номер правильного варианта ответа и краткое пояснение",
+            },
+            {
+                "role": "user",
+                "text": body.query,
+            },
+                ]
+        result = sdk.models.completions("yandexgpt").configure(temperature=0.5).run(messages).alternatives[0].text
+
         answer = 1  # Замените на реальный вызов модели
         sources: List[HttpUrl] = [
-            HttpUrl("https://itmo.ru/ru/"),
-            HttpUrl("https://abit.itmo.ru/"),
+            # HttpUrl("https://itmo.ru/ru/"),
+            # HttpUrl("https://abit.itmo.ru/"),
         ]
 
         response = PredictionResponse(
             id=body.id,
             answer=answer,
-            reasoning="Из информации на сайте",
+            reasoning=result,
             sources=sources,
         )
         await logger.info(f"Successfully processed request {body.id}")
         return response
+    
     except ValueError as e:
         error_msg = str(e)
         await logger.error(f"Validation error for request {body.id}: {error_msg}")
         raise HTTPException(status_code=400, detail=error_msg)
+    
     except Exception as e:
         await logger.error(f"Internal error processing request {body.id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")

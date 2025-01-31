@@ -8,6 +8,8 @@
 .codeclimate.yml
 .travis.yml
 .taskcluster.yml
+api_key.txt
+catalog_id.txt
 
 # Docker
 docker-compose.yml

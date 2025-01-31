@@ -9,8 +9,12 @@ services:
     restart: unless-stopped
     environment:
       - TZ=UTC
+      - CATALOG_ID=${CATALOG_ID}
+      - API_KEY=${API_KEY}
     volumes:
       - ./logs:/app/logs
+
+    
     # Если нужно GPU
     # runtime: nvidia
     # deploy:
