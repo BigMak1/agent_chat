@@ -4,7 +4,7 @@ pip-chill
 uvicorn
 gunicorn
 langchain
-chromadb==0.4.18
+chromadb
 langchain-chroma
 chromadb
 yandex-chain
